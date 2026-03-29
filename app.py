@@ -1,49 +1,40 @@
-# Digital OCEAN FLASK SERVER RECEIVES IMAGE
 from flask import Flask, request, jsonify
 import classify
 import base64
-import json
 import firebase
 import env
+from flask_cors import CORS
 
 # Instantiate Flask
 app = Flask(__name__)
+CORS(app)  # Allow React frontend to call this API
 
 
-# health check
+# Health check
 @app.route('/status')
 def health_check():
     return 'Running!'
 
 
-# Performing image Recognition on Image, sent as bytes via POST payload
+# Performing image recognition on image sent as JSON via POST
+# Expected payload: { "image": "<base64string>", "lat": 12.34, "lng": 56.78 }
 @app.route('/detect', methods=["POST"])
 def detect():
+    data = request.get_json()
 
-    imgBytes = request.data
-
-    imgdata = base64.b64decode(imgBytes)
+    # Decode image
+    imgdata = base64.b64decode(data['image'])
     with open("temp.png", 'wb') as f:
         f.write(imgdata)
 
-    print("successfully receieved image")
-    
-    # Pass image bytes to classifier
-    result = classify.analyse("temp.png")
+    print("Successfully received image")
 
-    # Return results as neat JSON object, using 
-    result = jsonify(result)
-    print(result.json)
+    # Get GPS coordinates if provided
+    lat = data.get('lat', None)
+    lng = data.get('lng', None)
 
-    response_data = result.json
-    print(response_data)
-    
-    db = firebase.Firebase()
-    db.authenticate()
-    db.push(response_data)
-    print("Updated Firebase.")
-
-    return result
+    # Classify image
+    result = classify.an
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

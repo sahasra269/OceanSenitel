@@ -1,114 +1,256 @@
-<img src="https://github.com/ArunMichaelDsouza/tensorflow-image-detection/raw/master/icon.png" width="250" height="auto" alt="tensorflow-image-detection icon"/>
+# 🌊 Ocean Sentinel
 
-# tensorflow-image-detection
-A generic image detection program that uses Google's Machine Learning library, [Tensorflow](https://www.tensorflow.org/) and a pre-trained Deep Learning Convolutional Neural Network model called [Inception](https://research.googleblog.com/2016/03/train-your-own-image-classifier-with.html).
+> AI-Powered Ocean Pollution Detection System
 
-This model has been pre-trained for the [ImageNet](http://image-net.org/) Large Visual Recognition Challenge using the data from 2012, and it can differentiate between 1,000 different classes, like Dalmatian, dishwasher etc.
-The program applies Transfer Learning to this existing model and re-trains it to classify a new set of images.
+Ocean Sentinel is a real-time ocean pollution detection platform that uses deep learning to identify and classify waste materials — plastic, glass, metal, paper, cardboard, and trash — from images captured by drones or boats. Detections are plotted live on an interactive map, giving coastguards and environmental teams a real-time view of pollution hotspots.
 
-This is a generic setup and can be used to classify almost any kind of image. I created a small demo that classifies two image data sets - my photos and my girlfriend's photos, and returns a prediction score denoting the possibility of it being my image or my girlfriend's image.
+---
 
-<br/>
+## 🏗️ Built On
 
-## Installation
-Make sure you have [Python 3](https://www.python.org/downloads/) installed, then install [Tensorflow](https://www.tensorflow.org/install/) on your system, and clone this repo.
+This project builds upon the open-source [tensorflow-image-detection](https://github.com/antiplasti/Plastic-Detection-Model) repo by Arun Michael Dsouza & Royal Bhati (MIT License), which we:
+- Migrated fully from **TensorFlow 1.x → TensorFlow 2.x** for Apple Silicon (M1/M2/M3) compatibility
+- Extended with a **Flask REST API**, **React dashboard**, and **Firebase integration**
+- Retrained with **8000 steps** for improved accuracy
 
-<br/>
+Dataset sourced from [TrashNet](https://github.com/garythung/trashnet) by Gary Thung (Stanford).
 
-## Usage
+---
 
-Our team, Anti Plasti used to detect images of plastics, garbage, metal, paper, glass and cardboard in the ocean to allow for the collection and reduction of these materials, particularly plastic, in the ocean waters.
+## 🎯 What It Does
 
-### Prepare the image data sets
-In order to start the transfer learning process, a folder named ``training_dataset`` needs to be created in the root of the project folder. This folder will contain the image data sets for all the subjects, for whom the classification is to be performed.
-
-[Download the Datasets here](https://bit.ly/3mcb3aS)
-
-Create the ``training_dataset`` folder and add the images for all the data sets in the following manner -
-
-```javascript
-/
-|
-|
----- /training_dataset
-|    |
-|    |
-|    ---- /plastics
-|    |    plastic1.jpg
-|    |    plastic2.jpg
-|    |    ...
-|    |
-|    |
-|    ---- /paper
-|         paper1.jpg
-|         paper2.jpg
-|         ...
-|
-|
 ```
-This enables classification of images between the ``plastics`` and ``paper`` data sets.
-
-> Make sure to include multiple variants of the subject (side profiles, zoomed in images etc.), the more the images, the better is the result.
-
-### Initiate transfer learning
-Go to the project directory and run -
-
-```javascript
-$ bash train.sh
-```
-This script installs the ``Inception`` model and initiates the re-training process for the specified image data sets.
-
-Once the process is complete, it will return a training accuracy somewhere between ``85% - 100%``.
-
-The ``training summaries``, ``retrained graphs`` and ``retrained labels`` will be saved in a folder named ``tf_files``.
-
-### Classify objects
-
-```javascript
-python classify.py
+Drone / Boat captures image
+        ↓
+Flask API receives image + GPS coordinates
+        ↓
+Inception v3 model classifies waste type
+        ↓
+Result saved to Firebase (cloud)
+        ↓
+React dashboard plots detection live on map
 ```
 
-This opens up the file dialog using which you can select your input file.
+---
 
-<img src="https://i.imgur.com/LPXrKe8.png">
+## 🧠 Model
 
-Once the input file is selected, the classifier will output the predictions for each data set. A prediction score between ``0.8`` to ``1`` is considered to be optimal.
+- **Architecture**: Google Inception v3 (pre-trained on ImageNet)
+- **Technique**: Transfer Learning — retrained final layer on waste dataset
+- **Categories**: Plastic, Glass, Metal, Paper, Cardboard, Trash
+- **Training Steps**: 8000
+- **Final Test Accuracy**: ~90%
+- **Dataset**: ~2500 images from TrashNet
 
-<img src="https://i.imgur.com/zuFXTRb.jpg">
+---
 
-<br/>
+## 🛠️ Tech Stack
 
-<br/>
+| Layer | Technology |
+|---|---|
+| ML Model | TensorFlow 2.x + Inception v3 |
+| Backend API | Flask + Flask-CORS |
+| Frontend | React.js |
+| Map | Leaflet.js + React-Leaflet |
+| Database | Google Firebase Realtime Database |
+| Auth | Firebase Authentication |
 
-## Contributors
+---
 
-| [<img src="https://avatars3.githubusercontent.com/u/4924614" width="100px;"/><br /><sub><b>Arun Michael Dsouza</b></sub>](https://github.com/ArunMichaelDsouza)<br />| [<img src="https://avatars3.githubusercontent.com/u/11679543" width="100px;"/><br /><sub><b>Royal Bhati</b></sub>](https://github.com/royalbhati)<br />|
-| :---: | :---: |
+## 📁 Project Structure
 
+```
+Plastic-Detection-Model/
+├── retrain.py              # Transfer learning script (TF2 compatible)
+├── classify.py             # CLI image classifier
+├── app.py                  # Flask REST API
+├── firebase.py             # Firebase integration
+├── env.py                  # Environment credentials (not committed)
+├── service.py              # Background service for drone/Pi deployment
+├── train.sh                # Training shell script
+├── training_dataset/       # Image dataset (6 categories)
+├── dashboard/              # React frontend
+│   ├── src/
+│   │   ├── App.js          # Main dashboard component
+│   │   └── App.css         # Styling
+└── README.md
+```
 
-[Many thanks for the Dataset which was obtained from this Git project](https://github.com/garythung/trashnet)
+---
 
-<br/>
+## 🚀 Getting Started
 
-## License
-MIT License
+### Prerequisites
+- Python 3.8+
+- Node.js 18+
+- pip
+- A Firebase project ([set one up here](https://console.firebase.google.com))
 
-Copyright (c) 2017 Arun Michael Dsouza
+---
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+### 1. Clone the repo
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+```bash
+git clone https://github.com/YOUR_USERNAME/ocean-sentinel.git
+cd ocean-sentinel
+```
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+### 2. Set up Python environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate       # Mac/Linux
+venv\Scripts\activate          # Windows
+```
+
+### 3. Install Python dependencies
+
+```bash
+pip install tensorflow-macos   # Apple Silicon Mac
+# OR
+pip install tensorflow         # Intel Mac / Linux / Windows
+
+pip install flask flask-cors pyrebase4 tensorboard
+```
+
+### 4. Configure Firebase credentials
+
+Create `env.py` in the project root (this file is gitignored):
+
+```python
+auth_cred = {
+    "API_KEY": "your_api_key",
+    "AUTH_DOMAIN": "your-project.firebaseapp.com",
+    "DATABASE_URL": "https://your-project-default-rtdb.firebaseio.com",
+    "STORAGE_BUCKET": "your-project.firebasestorage.app",
+    "EMAIL": "your@email.com",
+    "PASS": "yourpassword",
+    "B_ID": "B-001"
+}
+```
+
+### 5. Download the dataset
+
+[Download Dataset](https://bit.ly/3mcb3aS) and unzip into the project root:
+
+```
+training_dataset/
+├── plastic/
+├── glass/
+├── metal/
+├── paper/
+├── cardboard/
+└── trash/
+```
+
+### 6. Train the model
+
+```bash
+python3 retrain.py \
+  --image_dir ./training_dataset \
+  --how_many_training_steps=8000
+```
+
+Training takes 30–60 minutes. Expected accuracy: **85–95%**.
+
+### 7. Test the classifier
+
+```bash
+python3 classify.py path/to/image.jpg
+```
+
+Example output:
+```
+plastic:   94.4%
+glass:      3.3%
+metal:      1.5%
+paper:      0.7%
+trash:      0.1%
+cardboard:  0.1%
+```
+
+### 8. Start the Flask API
+
+```bash
+python3 app.py
+```
+
+API runs at `http://localhost:8080`
+
+### 9. Start the React dashboard
+
+```bash
+cd dashboard
+npm install
+npm start
+```
+
+Dashboard opens at `http://localhost:3000`
+
+---
+
+## 🌐 API Reference
+
+### Health Check
+```
+GET /status
+→ "Running!"
+```
+
+### Detect Pollution
+```
+POST /detect
+Content-Type: application/json
+
+{
+  "image": "<base64 encoded image>",
+  "lat": 8.5,
+  "lng": 72.3
+}
+
+→ {
+    "plastic": 0.944,
+    "glass": 0.033,
+    "metal": 0.015,
+    "paper": 0.007,
+    "trash": 0.001,
+    "cardboard": 0.001,
+    "lat": 8.5,
+    "lng": 72.3
+  }
+```
+
+---
+
+## 📸 Dashboard
+
+- **Upload any image** of ocean waste
+- **Enter GPS coordinates** of where it was captured
+- **Get instant classification** with confidence scores
+- **See it plotted live** on the ocean map
+- **Zoom in** to see pollution hotspots in detail
+
+---
+
+## ⚠️ Important Notes
+
+- `env.py` is gitignored — never commit your Firebase credentials
+- The model file (`/tmp/output_graph.pb`) is generated locally after training
+- For production deployment, replace the Flask dev server with Gunicorn
+
+---
+
+## 📜 Original License
+
+MIT License — Copyright (c) 2017 Arun Michael Dsouza
+
+This project extends the original work under the same MIT License.
+See [LICENSE](LICENSE) for full details.
+
+---
+
+## 🙏 Acknowledgements
+
+- [tensorflow-image-detection](https://github.com/antiplasti/Plastic-Detection-Model) — base model and architecture
+- [TrashNet](https://github.com/garythung/trashnet) — dataset by Gary Thung, Stanford University
+- [Google Inception v3](https://research.googleblog.com/2016/03/train-your-own-image-classifier-with.html) — pre-trained model
