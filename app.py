@@ -5,21 +5,26 @@ import firebase
 import env
 from flask_cors import CORS
 
-# Instantiate Flask
 app = Flask(__name__)
-CORS(app)  # Allow React frontend to call this API
+CORS(app)
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 # Health check
 @app.route('/status')
 def health_check():
     return 'Running!'
 
-
-# Performing image recognition on image sent as JSON via POST
-# Expected payload: { "image": "<base64string>", "lat": 12.34, "lng": 56.78 }
-@app.route('/detect', methods=["POST"])
+@app.route('/detect', methods=["POST", "OPTIONS"])
 def detect():
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
+
     data = request.get_json()
 
     # Decode image
@@ -34,7 +39,22 @@ def detect():
     lng = data.get('lng', None)
 
     # Classify image
-    result = classify.an
+    result = classify.analyse("temp.png")
+
+    # Add location to result
+    result['lat'] = lat
+    result['lng'] = lng
+
+    # Push to Firebase
+    try:
+        db = firebase.Firebase()
+        db.authenticate()
+        db.push(result)
+        print("Updated Firebase.")
+    except Exception as e:
+        print("Firebase error:", e)
+
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

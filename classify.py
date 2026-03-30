@@ -9,10 +9,9 @@ def analyse(imageObj):
 
     # Loads label file, strips off carriage return
     label_lines = [line.rstrip() for line
-                   in tf.io.gfile.GFile("/tmp/output_labels.txt")]
+               in tf.io.gfile.GFile("tf_files/retrained_labels.txt")]
 
-    # Unpersists graph from file
-    with tf.io.gfile.GFile("/tmp/output_graph.pb", 'rb') as f:
+    with tf.io.gfile.GFile("tf_files/retrained_graph.pb", 'rb') as f:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
